@@ -6,36 +6,25 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 11:36:50 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/07 17:01:50 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/08 18:29:16 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 /*
 TODO:
-- Loop do read até \n
-- cache >>> free;
+- Loop do read até \n >> Salvar \n
+- Cache >>> free;
+- Main com argc **argv
 */
 
 #include "get_next_line.h"
 
-int	mdc(int a, int b)
+char	*bet_next_line(int fd)
 {
-	int remainder;
-	while (remainder != 0)
-	{
-		remainder = a % b;
-		a = b;
-		b = remainder;
-	}
-	return (a);
-}
-
-static char	*bet_next_line(int fd)
-{
-	int		n;
-	int		i;
-	int		mdc_;
-	char	*buffer;
+	int			n;
+	int			i;
+	char		*buffer;
+	char		*temp;
 	static char	*cache;
 
 	buffer = malloc(sizeof(char) * (BUFFER_SIZE) + 1);
@@ -43,32 +32,35 @@ static char	*bet_next_line(int fd)
 		return (NULL);
 	if (!cache)
 		cache = malloc(sizeof(char) * 1);
-	i = 0;
-	n = 1;
-	while (n > 0 && !ft_strchr(cache, '\n'))
+	n = 0;
+	while (!ft_strchr(cache, '\n'))
 	{
+		puts("1");
 		n = read(fd, buffer, BUFFER_SIZE);
-		if (ft_strchr(cache, '\n'))
-			return (ft_strchr(cache, '\n'));
+		puts("2");
 		if (n <= 0)
-			return (NULL);
+			break;
 		buffer[n] = '\0';
 		cache = ft_strjoin(cache, buffer);
+		printf("buffer: %s cache: %s \n", buffer, cache);
 	}
-	free(buffer);
+	i = 0;
+	if (ft_strchr(cache, '\n'))
+	{
+		temp = malloc(sizeof(char) * 1);
+		while (ft_strchr(cache, '\n'))
+		{
+			temp[i] = cache[i];
+			i++;
+		}
+		temp[i] = '\0';
+		cache = ft_strdup(temp);
+	}
+
+	//TODO: funcao que pega a linha a ser impressa.
+	//TODO: funcao tratar a sobra a ser guardada;
+	//TODO: checar \n e \0 (tratar tb na saida)
 	return (cache);
-}
-
-char	*basics(int fd)
-{
-	char *buffer;
-
-	buffer = malloc(sizeof(char) * BUFFER_SIZE + 1);
-	if (!buffer)
-		return (NULL);
-	buffer[BUFFER_SIZE] = '\0';
-	read(fd, buffer, BUFFER_SIZE);
-	return (buffer);
 }
 
 int	main(void)
@@ -78,6 +70,6 @@ int	main(void)
 
 	fd = open("teste.txt", O_RDONLY);
 	str = bet_next_line(fd);
-	printf("%s",str);
+	printf("%s-\n",str);
 	return (0);
 }
