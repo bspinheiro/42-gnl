@@ -6,23 +6,24 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 13:18:34 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/08 18:29:11 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/11 22:19:29 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*ft_strchr(const char *s, int c)
+int	ft_strchr(char *s, int c)
 {
-	while (*s != '\0')
+	int i;
+
+	i = 0;
+	while (s[i] != '\0')
 	{
-		if (*s == (unsigned char)c)
-			return ((char *)s);
-		s++;
+		if (s[i] == (unsigned char)c)
+			return (i);
+		i++;
 	}
-	if (c == 0)
-		return ((char *)s);
-	return (0);
+	return (-1);
 }
 
 char	*ft_strjoin(char *s1, char *s2)
@@ -31,12 +32,8 @@ char	*ft_strjoin(char *s1, char *s2)
 	size_t	l2;
 	char	*str;
 
-	if (!s1 && !s2)
+	if (!s1 || !s2)
 		return (NULL);
-	else if (!s1)
-		return (ft_strdup(s2));
-	else if (!s2)
-		return (ft_strdup(s1));
 	l1 = ft_strlen(s1);
 	l2 = ft_strlen(s2);
 	str = malloc(sizeof(*str) * (l1 + l2 + 1));
@@ -45,7 +42,10 @@ char	*ft_strjoin(char *s1, char *s2)
 	ft_memcpy(str, s1, l1);
 	ft_memcpy(str + l1, s2, l2);
 	str[l1 + l2] = '\0';
-	free(s1);
+	if (s1)
+		free(s1);
+	if (s2)
+		free(s2);
 	return (str);
 }
 
