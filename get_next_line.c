@@ -6,7 +6,7 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 11:36:50 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/12 18:27:21 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/12 19:07:08 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ char	*build_cache(int fd, char *cache)
 		cache = malloc(sizeof(char) * 1);
 		cache[0] = '\0';
 	}
-	while (ft_strchr(cache, '\n') || flagEOF == 0)
+	while (!ft_strchr(cache, '\n') || flagEOF == 0)
 	{
 		buffer = read_buffer(fd, &flagEOF);
 		if (flagEOF != 0) // Em caso de Erro(-1) ou EOF(1)
@@ -89,17 +89,13 @@ char	*get_next_line(int fd)
 	return(line);
 }
 
-
+/*
 int	main(void)//TODO: Implement argc, argv
 {
 	int fd;
 	char *str;
 
 	fd = open("teste.txt", O_RDONLY);
-	str = get_next_line(fd);
-	printf("%s",str);
-	str = get_next_line(fd);
-	printf("%s",str);
 	while (1)
 	{
 		str = get_next_line(fd);
