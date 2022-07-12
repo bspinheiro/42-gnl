@@ -6,44 +6,51 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 11:36:50 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/12 03:59:28 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/12 18:27:21 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*read_buffer(int fd, int *n)
+char	*read_buffer(int fd, int *flagEOF)
 {
 	char	*buffer;
+	int		n;
 
 	buffer = malloc (sizeof(char) * ((BUFFER_SIZE) + 1));
 	if (!buffer)
 		return (NULL);
-	*n = read(fd, buffer, BUFFER_SIZE);
-	if (*n < 0)
+	n = read(fd, buffer, BUFFER_SIZE);
+	if (n < 0) // (-1) Erro de leitura do buffer
 	{
+		*flagEOF = -1;
 		return (NULL);
 	}
-	buffer[*n] = '\0';
+	if (n == 0) // (1) Fim do Arquivo
+		*flagEOF = 1;
+	buffer[n] = '\0';
 	return (buffer);
 }
 
 char	*build_cache(int fd, char *cache)
 {
 	char	*buffer;
-	int		n;
+	int		flagEOF;
 
-	n = 1;
+	flagEOF = 0; // Leitura Normal
 	if (!cache)
-	{
+	{//STRDUP ?
 		cache = malloc(sizeof(char) * 1);
 		cache[0] = '\0';
 	}
-	while (n > 0)
+	while (ft_strchr(cache, '\n') || flagEOF == 0)
 	{
-		buffer = read_buffer(fd, &n);
-		if (n < 0)
-			return (NULL);
+		buffer = read_buffer(fd, &flagEOF);
+		if (flagEOF != 0) // Em caso de Erro(-1) ou EOF(1)
+		{
+			free(buffer);
+			break;
+		}
 		cache = ft_strjoin(cache, buffer);
 	}
 	return (cache);
@@ -62,13 +69,12 @@ char	*get_next_line(int fd)
 			free(cache);
 		return (NULL);
 	}
-	n = 0;
 	line = build_cache(fd, cache);
-	if (ft_strchr(line, '\n') != -1)
+	if (ft_strchr(line, '\n'))
 	{
-		temp = ft_strdup(line);
+		n = (ft_strchr(line,'\n') - line) + 1;
 
-		n = ft_strchr(line, '\n');
+		temp = ft_strdup(line);
 		free(line);
 		line = malloc(sizeof(char) * (n + 1));
 		ft_memcpy(line, temp, n);
@@ -83,13 +89,17 @@ char	*get_next_line(int fd)
 	return(line);
 }
 
-/*
+
 int	main(void)//TODO: Implement argc, argv
 {
 	int fd;
 	char *str;
 
 	fd = open("teste.txt", O_RDONLY);
+	str = get_next_line(fd);
+	printf("%s",str);
+	str = get_next_line(fd);
+	printf("%s",str);
 	while (1)
 	{
 		str = get_next_line(fd);
@@ -97,8 +107,8 @@ int	main(void)//TODO: Implement argc, argv
 			break ;
 		printf("%s",str);
 		free(str);
-	}// while (!*str);
+	}
 	close(fd);
 	return (0);
 }
-*/
+

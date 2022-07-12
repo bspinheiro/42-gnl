@@ -6,24 +6,23 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 13:18:34 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/11 22:19:29 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/12 16:52:08 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-int	ft_strchr(char *s, int c)
+char	*ft_strchr(const char *s, int c)
 {
-	int i;
-
-	i = 0;
-	while (s[i] != '\0')
+	while (*s != '\0')
 	{
-		if (s[i] == (unsigned char)c)
-			return (i);
-		i++;
+		if (*s == (unsigned char)c)
+			return ((char *)s);
+		s++;
 	}
-	return (-1);
+	if (c == 0)
+		return ((char *)s);
+	return (0);
 }
 
 char	*ft_strjoin(char *s1, char *s2)
