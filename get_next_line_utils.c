@@ -6,7 +6,7 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 13:18:34 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/12 16:52:08 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/13 19:58:10 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ char	*ft_strjoin(char *s1, char *s2)
 	size_t	l2;
 	char	*str;
 
-	if (!s1 || !s2)
+	if (!s1 && !s2)
 		return (NULL);
 	l1 = ft_strlen(s1);
 	l2 = ft_strlen(s2);
@@ -41,9 +41,9 @@ char	*ft_strjoin(char *s1, char *s2)
 	ft_memcpy(str, s1, l1);
 	ft_memcpy(str + l1, s2, l2);
 	str[l1 + l2] = '\0';
-	if (s1)
+//	if (s1)
 		free(s1);
-	if (s2)
+//	if (s2)
 		free(s2);
 	return (str);
 }
@@ -78,7 +78,7 @@ void	*ft_memcpy(void *dst, const void *src, size_t n)
 	}
 }
 
-char	*ft_strdup(const char *s)
+char	*ft_strdup(char *s)
 {
 	size_t	l;
 	char	*t;

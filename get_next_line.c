@@ -6,7 +6,7 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 11:36:50 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/12 19:07:08 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/13 20:25:13 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,9 @@ char	*build_cache(int fd, char *cache)
 		buffer = read_buffer(fd, &flagEOF);
 		if (flagEOF != 0) // Em caso de Erro(-1) ou EOF(1)
 		{
-			free(buffer);
+			if (buffer)
+				free(buffer);
+			buffer = NULL;
 			break;
 		}
 		cache = ft_strjoin(cache, buffer);
@@ -63,48 +65,41 @@ char	*get_next_line(int fd)
 	char		*temp;
 	int			n;
 
-	if (BUFFER_SIZE < 1 || fd < 0)
+	if (BUFFER_SIZE < 1 || fd < 0 || fd > MAX_FD)
 	{
-		if (cache)
-			free(cache);
 		return (NULL);
 	}
-	line = build_cache(fd, cache);
+	line = ft_strdup(build_cache(fd, cache));
 	if (ft_strchr(line, '\n'))
 	{
 		n = (ft_strchr(line,'\n') - line) + 1;
-
 		temp = ft_strdup(line);
-		free(line);
+		if (line)
+			free(line);
 		line = malloc(sizeof(char) * (n + 1));
 		ft_memcpy(line, temp, n);
 		line[n] = '\0';
 		if ((ft_strlen(temp) - ft_strlen(line)) != 0)
 		{
-			//free(cache);
+			if (cache)
+				free(cache);
 			cache = ft_strdup(temp + n);
 		}
-		free(temp);
+		if (temp)
+			free(temp);
 	}
 	return(line);
 }
 
-/*
-int	main(void)//TODO: Implement argc, argv
-{
-	int fd;
-	char *str;
-
-	fd = open("teste.txt", O_RDONLY);
-	while (1)
-	{
-		str = get_next_line(fd);
-		if (!*str)
-			break ;
-		printf("%s",str);
-		free(str);
-	}
-	close(fd);
-	return (0);
-}
-
+//
+//int	main(void)//TODO: Implement argc, argv
+//{
+//	int		fd;
+//	char	*str;
+//
+//	fd = open("teste.txt", O_RDONLY);
+//	str = get_next_line(fd);
+//	free(str);
+//	return (0);
+//}
+//
