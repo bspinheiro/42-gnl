@@ -6,7 +6,7 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 13:18:34 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/14 16:46:19 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/14 18:21:54 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,6 +83,8 @@ char	*ft_strdup(char *s)
 	size_t	l;
 	char	*t;
 
+	if (s == NULL)
+		return(NULL);
 	l = ft_strlen((char *)s);
 	t = malloc(sizeof(char) * (l + 1));
 	if (t == NULL)
