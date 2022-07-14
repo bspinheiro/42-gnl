@@ -6,7 +6,7 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 11:36:50 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/13 20:25:13 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/14 14:16:24 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,13 @@ char	*read_buffer(int fd, int *flagEOF)
 	char	*buffer;
 	int		n;
 
-	buffer = malloc (sizeof(char) * ((BUFFER_SIZE) + 1));
+	buffer = malloc(sizeof(char) * ((BUFFER_SIZE) + 1));
+	//
 	if (!buffer)
 		return (NULL);
 	n = read(fd, buffer, BUFFER_SIZE);
+	// n + 1 >> malloc; copiar buffer pro malloc novo e dar free no buffer
+	// antigo;
 	if (n < 0) // (-1) Erro de leitura do buffer
 	{
 		*flagEOF = -1;
@@ -48,10 +51,9 @@ char	*build_cache(int fd, char *cache)
 		buffer = read_buffer(fd, &flagEOF);
 		if (flagEOF != 0) // Em caso de Erro(-1) ou EOF(1)
 		{
-			if (buffer)
-				free(buffer);
 			buffer = NULL;
-			break;
+			cache = ft_strjoin(cache, buffer);
+			break ;
 		}
 		cache = ft_strjoin(cache, buffer);
 	}
@@ -75,31 +77,48 @@ char	*get_next_line(int fd)
 		n = (ft_strchr(line,'\n') - line) + 1;
 		temp = ft_strdup(line);
 		if (line)
+		{
 			free(line);
+			line = NULL;
+		}
 		line = malloc(sizeof(char) * (n + 1));
 		ft_memcpy(line, temp, n);
 		line[n] = '\0';
 		if ((ft_strlen(temp) - ft_strlen(line)) != 0)
 		{
 			if (cache)
+			{
 				free(cache);
+				cache = NULL;
+			}
 			cache = ft_strdup(temp + n);
 		}
 		if (temp)
+		{
 			free(temp);
+			temp = NULL;
+		}
 	}
 	return(line);
 }
 
-//
-//int	main(void)//TODO: Implement argc, argv
-//{
-//	int		fd;
-//	char	*str;
-//
-//	fd = open("teste.txt", O_RDONLY);
-//	str = get_next_line(fd);
-//	free(str);
-//	return (0);
-//}
-//
+int	main(void)//TODO: Implement argc, argv
+{
+	int		fd;
+	char	*str;
+
+	str = NULL;
+	fd = open("teste.txt", O_RDONLY);
+	do
+	{
+		str = get_next_line(fd);
+		printf("%s", str);
+		free(str);
+	}while(str != NULL);
+	return (0);
+}
+
+// atividaade suspeita na memcpy da strdup
+// cuidado com a strdup
+// nao retorna null após a ultima linha
+// para cada verificação de 'NULL' seguida de um free setar o ponteiro para NULL

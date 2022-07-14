@@ -6,7 +6,7 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 13:18:34 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/13 19:58:10 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/14 16:46:19 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,16 +48,16 @@ char	*ft_strjoin(char *s1, char *s2)
 	return (str);
 }
 
-size_t	ft_strlen(const char *s)
+size_t	ft_strlen(char *s)
 {
-	size_t	i;
+	char	*str;
 
-	i = 0;
-	while (s[i] != '\0')
-	{
-		i++;
-	}
-	return (i);
+	str = s;
+	if (s == NULL)
+		return (0);
+	while (*s)
+		s++;
+	return (str - s);
 }
 
 void	*ft_memcpy(void *dst, const void *src, size_t n)
