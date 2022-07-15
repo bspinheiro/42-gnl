@@ -6,11 +6,23 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 13:18:34 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/14 18:21:54 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/15 20:29:38 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
+
+int	ft_strlen(char *s)
+{
+	int i;
+
+	i = 0;
+	if (s == NULL)
+		return (0);
+	while (s[i])
+		i++;
+	return (i);
+}
 
 char	*ft_strchr(const char *s, int c)
 {
@@ -48,18 +60,6 @@ char	*ft_strjoin(char *s1, char *s2)
 	return (str);
 }
 
-size_t	ft_strlen(char *s)
-{
-	char	*str;
-
-	str = s;
-	if (s == NULL)
-		return (0);
-	while (*s)
-		s++;
-	return (str - s);
-}
-
 void	*ft_memcpy(void *dst, const void *src, size_t n)
 {
 	size_t	i;
@@ -84,12 +84,16 @@ char	*ft_strdup(char *s)
 	char	*t;
 
 	if (s == NULL)
+	{
+		free(s);
 		return(NULL);
-	l = ft_strlen((char *)s);
+	}
+		l = ft_strlen((char *)s);
 	t = malloc(sizeof(char) * (l + 1));
 	if (t == NULL)
 		return (NULL);
 	ft_memcpy(t, s, l);
 	t[l] = '\0';
+	free(s);
 	return (t);
 }

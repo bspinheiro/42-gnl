@@ -6,64 +6,51 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/14 13:47:50 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/14 18:37:13 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/15 20:40:03 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*ft_calloc(size_t size)
+char	*read_buffer(int fd, char *buffer, ssize_t *flag)
 {
-	char	*ptr;
-	size_t	i;
-
-	i = 0;
-	ptr = malloc(sizeof(char) * (size));
-	if (!ptr)
+	// flags: ERR (-1) | EOF (0) | BYTES READ (+)
+	*flag = read(fd, buffer, BUFFER_SIZE);
+	if (*flag < 0)
 		return (NULL);
-	while (i < (size))
-	{
-		ptr[i] = '\0';
-		i++;
-	}
-	return (ptr);
-}
-
-char	*read_buffer(int fd, char *buffer, ssize_t *flagB)
-{
-	int n;
-
-	n = ft_strlen(buffer);
-	flagB = 0; // flags: ERR (-1) | EOF (0) | bytes (+)
-	flagB = (ssize_t *)read(fd, buffer, BUFFER_SIZE);
-	if (flagB <= 0)
-		return(NULL);
-	buffer[n] = '\0';
+	buffer[*flag] = 0;
 	return (buffer);
 }
 
-char	*build_cache(int fd, char *cache, ssize_t *flagB) //calloc buffer & free buffer
+char	*build_cache(int fd, char *cache, ssize_t *flag) //calloc buffer & free buffer
 {
 	char	*buffer;
 
-	//buffer = ft_calloc(BUFFER_SIZE + 1);
 	buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	buffer = read_buffer(fd, buffer, flagB);
+	buffer = read_buffer(fd, buffer, flag);
+	//flag - buffer
+	// > 0 - != \0  - loop join até \n e retorna resultado
+	// < 0 - ==NULL - retorna o que ja tem
+	// = 0 - ==\0   - 
 	cache = ft_strdup(buffer);
-	free(buffer);
 	return (cache);
 }
 
 char	*get_next_line(int fd)
 {
-	char *line;
-	ssize_t	flagB;
+	char	*line;
+	ssize_t	flag;
 
 	line = NULL;
-	flagB = 0;
-	line = build_cache(fd, line, &flagB);
-	if (BUFFER_SIZE < 1 || fd < 0 || fd > MAX_FD || flagB <= 0)
+	flag = 0;
+	if (BUFFER_SIZE < 1 || fd < 0 || fd > MAX_FD)
 		return (NULL);
+	line = build_cache(fd, line, &flag);
+	if (flag <= 0)
+	{
+		free(line);
+		return (NULL);
+	}
 	return(line);
 }
 
@@ -74,7 +61,7 @@ int	main(void)//TODO: Implement argc, argv
 	char	*str;
 
 	str = NULL;
-	fd = open("t0.txt", O_RDONLY);
+	fd = open("t2.txt", O_RDONLY);
 	do
 	{
 		str = get_next_line(fd);
