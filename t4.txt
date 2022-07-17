@@ -1,0 +1,12 @@
+
+hello
+EOF
+hallo
+EOF
+blew
+
+blow
+
+blah
+
+--THE END--

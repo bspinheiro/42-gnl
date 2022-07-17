@@ -6,7 +6,7 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 13:18:34 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/15 23:06:10 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/17 17:59:06 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ char	*ft_strjoin(char *s1, char *s2)
 	ft_memcpy(str + l1, s2, l2);
 	str[l1 + l2] = '\0';
 //	if (s1)
-		free(s1);
+//		free(s1);
 //	if (s2)
 //		free(s2);
 	return (str);
@@ -78,6 +78,26 @@ void	*ft_memcpy(void *dst, const void *src, size_t n)
 	}
 }
 
+void	*ft_memmove(void *dst, const void *src, size_t len)
+{
+	unsigned char		*_dst;
+	const unsigned char	*_src;
+
+	_dst = (unsigned char *)dst;
+	_src = (unsigned char *)src;
+	if (_dst <= _src)
+		return (ft_memcpy(dst, src, len));
+	else
+	{
+		while (len--)
+		{
+			*(_dst + len) = *(_src + len);
+		}
+	}
+	return (dst);
+}
+
+
 char	*ft_strdup(char *s)
 {
 	size_t	l;
@@ -94,6 +114,6 @@ char	*ft_strdup(char *s)
 		return (NULL);
 	ft_memcpy(t, s, l);
 	t[l] = '\0';
-	//free(s);
+	free(s);
 	return (t);
 }
