@@ -6,7 +6,7 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/14 13:47:50 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/17 20:06:02 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/18 01:17:44 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
@@ -39,20 +39,21 @@ char	*read_buffer(int fd, char *buffer, ssize_t *flag)
 	return (buffer);
 }
 
-int		n_counter(char *str)
+char	*sort_n_save_cache(char *tmp, char *cache)
 {
-	int i;
+	char *line;
 	int n;
 
-	i = 0;
-	n = 0;
-	while (str[i])
-	{
-		if (str[i] == '\n')
-			n++;
-		i++;
-	}
-	return (n);
+	line = NULL;
+	cache = NULL;
+	n = (ft_strchr(tmp, '\n') - tmp) + 1;
+	line = ft_calloc(ft_strlen(tmp));
+	cache = ft_calloc(ft_strlen(tmp));
+	//proteger line e cache contra vazios ?
+	ft_memmove(line, tmp, (ft_strchr(tmp, '\n') - tmp) + 1);
+	ft_memmove(cache, tmp + n, ft_strlen(tmp) - n);
+	free(tmp);
+	return (line);
 }
 
 char	*build_line(int fd, ssize_t *flag)
@@ -61,15 +62,9 @@ char	*build_line(int fd, ssize_t *flag)
 	char			*buffer;
 	char			*line;
 	char			*tmp;
-	int				n;
-	int				n_total;
-	//fazer join da estática + consertar loop de saida /0 + memleaks
-	//flag - buffer
-	// > 0 - != \0  - loop join até \n e retorna resultado
-	// < 0 - ==NULL - retorna o que ja tem
-	// = 0 - ==\0   -
-	n = 0;
+
 	line = NULL;
+	tmp = NULL;
 	buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buffer)
 	{
@@ -79,39 +74,17 @@ char	*build_line(int fd, ssize_t *flag)
 	while (*flag > 0)
 	{
 		buffer = read_buffer(fd, buffer, flag);
-//		printf("-*--buffer:%p-%s-%d-\n", buffer, buffer, ft_strlen(buffer));
+
 		if (ft_strlen(cache) != 0)
 		{
-			line = ft_strjoin(line, cache);
+			tmp = ft_strjoin(cache, tmp);
 			free(cache);
-			cache = NULL;
 		}
-		if (!ft_strchr(buffer, '\n'))
-		{
-			line = ft_strjoin(line, buffer);
-//			printf("-A--line:%p-%s-%d-\n", line, line, ft_strlen(line));
-		}
-		else
-		{
-			n = (ft_strchr(buffer, '\n') - buffer) + 1;
-//			printf("-N--n:%i---\n", n);
-			tmp = ft_calloc(n);
-			//temp = malloc(sizeof(char)*(n + 1));
-			//temp[n] = '\0';
-			ft_memmove(tmp, buffer, n);
-//			printf("-B--temp:%p-%s-%d-\n", temp, temp, ft_strlen(temp));
-			line = ft_strjoin(line, tmp);
-			//free(temp);
-			cache = ft_calloc(BUFFER_SIZE + 1);
-			//cache = malloc(sizeof(char) * (BUFFER_SIZE + 1));
-			ft_memmove(cache, buffer + n, (ft_strlen(buffer) - n));
-			//cache[n] = 0;
-//			printf("-C--cache:%p-%s-%d-\n", cache, cache, ft_strlen(cache));
-			free(tmp);
+		tmp = ft_strjoin(tmp, buffer);
+		if (ft_strchr(tmp, '\n'))
 			break;
-		}
 	}
-	free(buffer);
+	line = sort_n_save_cache(tmp, cache);
 	return (line);
 }
 
@@ -146,6 +119,6 @@ int	main(void)//TODO: Implement argc, argv
 		str = get_next_line(fd);
 		printf("%s", str);
 		free(str);
-	} while(*str);
+	} while(str != NULL);
 	return (0);
 }

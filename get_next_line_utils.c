@@ -6,7 +6,7 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 13:18:34 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/17 17:59:06 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/18 01:11:02 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	ft_strlen(char *s)
 	i = 0;
 	if (s == NULL)
 		return (0);
-	while (s[i])
+	while (s[i] != '\0')
 		i++;
 	return (i);
 }
@@ -55,8 +55,8 @@ char	*ft_strjoin(char *s1, char *s2)
 	str[l1 + l2] = '\0';
 //	if (s1)
 //		free(s1);
-//	if (s2)
-//		free(s2);
+	if (s2)
+		free(s2);
 	return (str);
 }
 
