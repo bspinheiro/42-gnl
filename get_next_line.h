@@ -6,7 +6,7 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 11:38:17 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/17 18:01:19 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/19 18:30:56 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,6 @@ char	*ft_strjoin(char *s1, char *s2);
 char	*ft_strdup(char *s);
 int		ft_strlen(char *s);
 void	*ft_memcpy(void *dst, const void *src, size_t n);
-void	*ft_memmove(void *dst, const void *src, size_t len);
+char	*ft_substr(char *s, int start, int len);
 
 #endif

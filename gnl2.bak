@@ -6,28 +6,10 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/14 13:47:50 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/18 01:17:44 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/19 19:11:38 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "get_next_line.h"
-
-void *ft_calloc(size_t size)
-{
-	size_t *ptr;
-	size_t i;
-
-	i = 0;
-	ptr = malloc(sizeof(char) * (size + 1));
-	if (!ptr)
-		return (NULL);
-	else
-		while(i < size + 1)
-		{
-			ptr[i] = 0;
-			i++;
-		}
-	return (ptr);
-}
 
 char	*read_buffer(int fd, char *buffer, ssize_t *flag)
 {
@@ -39,71 +21,67 @@ char	*read_buffer(int fd, char *buffer, ssize_t *flag)
 	return (buffer);
 }
 
-char	*sort_n_save_cache(char *tmp, char *cache)
+char	*rip_n_save(char *tmp, char *cache)
 {
-	char *line;
-	int n;
-
-	line = NULL;
-	cache = NULL;
+	int		n;
+	char	*line;
+	n = 0;
+	if (!tmp)
+		return (NULL);
+	if (tmp == cache)
+		tmp = ft_strdup(cache);
 	n = (ft_strchr(tmp, '\n') - tmp) + 1;
-	line = ft_calloc(ft_strlen(tmp));
-	cache = ft_calloc(ft_strlen(tmp));
-	//proteger line e cache contra vazios ?
-	ft_memmove(line, tmp, (ft_strchr(tmp, '\n') - tmp) + 1);
-	ft_memmove(cache, tmp + n, ft_strlen(tmp) - n);
+	line = ft_substr(tmp, 0, n);
+	cache = ft_substr(tmp, n, ft_strlen(tmp) + 1);
 	free(tmp);
 	return (line);
 }
 
 char	*build_line(int fd, ssize_t *flag)
 {
-	static char		*cache;
-	char			*buffer;
-	char			*line;
-	char			*tmp;
+	char	*buffer;
+	char	*line;
 
 	line = NULL;
-	tmp = NULL;
+	line = ft_strdup("\0");
 	buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buffer)
 	{
 		*flag = -2;
 		return (NULL);
 	}
-	while (*flag > 0)
+	while (*flag > 0 && !ft_strchr(line, '\n'))
 	{
 		buffer = read_buffer(fd, buffer, flag);
-
-		if (ft_strlen(cache) != 0)
-		{
-			tmp = ft_strjoin(cache, tmp);
-			free(cache);
-		}
-		tmp = ft_strjoin(tmp, buffer);
-		if (ft_strchr(tmp, '\n'))
-			break;
+		line = ft_strjoin(line, buffer);
 	}
-	line = sort_n_save_cache(tmp, cache);
+	free(buffer);
+	if (!*line)
+		return (NULL);
 	return (line);
 }
 
 char	*get_next_line(int fd)
 {
+	static char	*cache;
+	char		*temp;
 	char		*line;
 	ssize_t		flag;
 
-	line = NULL;
+	temp = NULL;
 	flag = 1;
+	if (!cache)
+		cache = ft_strdup("\0");
 	if (BUFFER_SIZE < 1 || fd < 0 || fd > MAX_FD)
 		return (NULL);
-	line = build_line(fd, &flag);
-	if (flag < 0)
+	if (!ft_strchr(cache, '\n'))
 	{
-		free(line);
-		return (NULL);
+		temp = build_line(fd, &flag);
+		line = rip_n_save(temp, cache);
 	}
-	return(line);
+	else
+		line = rip_n_save(cache, cache);
+	return (line);
 }
 
 
@@ -113,7 +91,7 @@ int	main(void)//TODO: Implement argc, argv
 	char	*str;
 
 	str = NULL;
-	fd = open("t4.txt", O_RDONLY);
+	fd = open("t2.txt", O_RDONLY);
 	do
 	{
 		str = get_next_line(fd);
@@ -122,3 +100,4 @@ int	main(void)//TODO: Implement argc, argv
 	} while(str != NULL);
 	return (0);
 }
+

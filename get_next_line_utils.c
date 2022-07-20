@@ -6,7 +6,7 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 13:18:34 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/18 01:11:02 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/19 18:31:27 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,10 +53,10 @@ char	*ft_strjoin(char *s1, char *s2)
 	ft_memcpy(str, s1, l1);
 	ft_memcpy(str + l1, s2, l2);
 	str[l1 + l2] = '\0';
-//	if (s1)
-//		free(s1);
-	if (s2)
-		free(s2);
+	if (s1)
+		free(s1);
+//	if (s2)
+//		free(s2);
 	return (str);
 }
 
@@ -78,42 +78,40 @@ void	*ft_memcpy(void *dst, const void *src, size_t n)
 	}
 }
 
-void	*ft_memmove(void *dst, const void *src, size_t len)
-{
-	unsigned char		*_dst;
-	const unsigned char	*_src;
-
-	_dst = (unsigned char *)dst;
-	_src = (unsigned char *)src;
-	if (_dst <= _src)
-		return (ft_memcpy(dst, src, len));
-	else
-	{
-		while (len--)
-		{
-			*(_dst + len) = *(_src + len);
-		}
-	}
-	return (dst);
-}
-
-
 char	*ft_strdup(char *s)
 {
 	size_t	l;
 	char	*t;
 
-	//if (s == NULL)
-	//{
-	//	free(s);
-	//	return(NULL);
-	//}
 	l = ft_strlen((char *)s);
 	t = malloc(sizeof(char) * (l + 1));
 	if (t == NULL)
 		return (NULL);
 	ft_memcpy(t, s, l);
 	t[l] = '\0';
-	free(s);
 	return (t);
+}
+
+char	*ft_substr(char *s, int start, int len)
+{
+	int	i;
+	char	*str;
+
+	if (!s)
+		return (NULL);
+	if (start > ft_strlen(s))
+		return (ft_strdup(""));
+	if (ft_strlen(s) < len)
+		len = ft_strlen(s);
+	str = malloc(len + 1);
+	if (!str)
+		return (NULL);
+	i = 0;
+	while (s[i + start] && i < len)
+	{
+		str[i] = s[i + start];
+		i++;
+	}
+	str[i] = 0;
+	return (str);
 }
