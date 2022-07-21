@@ -6,14 +6,27 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/14 13:47:50 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/19 20:46:21 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/21 04:50:54 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include "get_next_line.h"
+
+char	*ft_strchr(const char *s, int c)
+{
+	while (*s != '\0')
+	{
+		if (*s == (unsigned char)c)
+			return ((char *)s);
+		s++;
+	}
+	if (c == 0)
+		return ((char *)s);
+	return (0);
+}
 
 char	*read_buffer(int fd, char *buffer, ssize_t *flag)
 {
-	// flags: (-2) ERR alloc | ERR read (-1) | EOF (0) | BYTES READ (+)
 	*flag = read(fd, buffer, BUFFER_SIZE);
 	if (*flag < 0)
 		return (NULL);
@@ -21,31 +34,11 @@ char	*read_buffer(int fd, char *buffer, ssize_t *flag)
 	return (buffer);
 }
 
-char	*rip_n_save(char *temp, char *cache)
-{
-	int		n;
-	char	*line;
-	char	*tmp;
-
-	n = 0;
-	if (!temp)
-		return (NULL);
-	tmp = ft_strdup(temp);
-	n = (ft_strchr(tmp, '\n') - tmp) + 1;
-	line = ft_substr(tmp, 0, n);
-	free(cache);
-	cache = ft_substr(tmp, n, ft_strlen(tmp) + 1);
-	free(tmp);
-	free(temp);
-	return (line);
-}
-
 char	*build_line(int fd, ssize_t *flag)
 {
 	char	*buffer;
 	char	*line;
 
-	line = NULL;
 	line = ft_strdup("\0");
 	buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buffer)
@@ -60,7 +53,32 @@ char	*build_line(int fd, ssize_t *flag)
 	}
 	free(buffer);
 	if (!*line)
+	{
+		free(line);
 		return (NULL);
+	}
+	return (line);
+}
+
+char	*cut_n_save(char *temp, char **cache)
+{
+	int		n;
+	char	*line;
+	char	*tmp;
+
+	n = 0;
+	if (!temp)
+		return (NULL);
+	if (ft_strlen(*cache) != 0)
+		tmp = ft_strjoin(*cache, temp);
+	else
+		tmp = ft_strdup(temp);
+	n = (ft_strchr(tmp, '\n') - tmp) + 1;
+	line = ft_substr(tmp, 0, n);
+	*cache = ft_substr(tmp, n, ft_strlen(tmp) + 1);
+	if (*temp)
+		free(temp);
+	free(tmp);
 	return (line);
 }
 
@@ -73,20 +91,19 @@ char	*get_next_line(int fd)
 
 	temp = NULL;
 	flag = 1;
-	if (!cache)
-		cache = ft_strdup("\0");
 	if (BUFFER_SIZE < 1 || fd < 0 || fd > MAX_FD)
 		return (NULL);
+	if (!cache)
+		cache = ft_strdup("\0");
 	if (!ft_strchr(cache, '\n'))
 	{
 		temp = build_line(fd, &flag);
-		line = rip_n_save(temp, cache);
+		line = cut_n_save(temp, &cache);
 	}
 	else
-		line = rip_n_save(cache, cache);
+		line = cut_n_save("", &cache);
 	return (line);
 }
-
 
 int	main(void)//TODO: Implement argc, argv
 {
@@ -103,4 +120,3 @@ int	main(void)//TODO: Implement argc, argv
 	} while(str != NULL);
 	return (0);
 }
-

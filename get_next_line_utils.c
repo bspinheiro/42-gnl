@@ -6,7 +6,7 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 13:18:34 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/19 18:31:27 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/21 04:42:40 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	ft_strlen(char *s)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	if (s == NULL)
@@ -22,19 +22,6 @@ int	ft_strlen(char *s)
 	while (s[i] != '\0')
 		i++;
 	return (i);
-}
-
-char	*ft_strchr(const char *s, int c)
-{
-	while (*s != '\0')
-	{
-		if (*s == (unsigned char)c)
-			return ((char *)s);
-		s++;
-	}
-	if (c == 0)
-		return ((char *)s);
-	return (0);
 }
 
 char	*ft_strjoin(char *s1, char *s2)
@@ -55,8 +42,6 @@ char	*ft_strjoin(char *s1, char *s2)
 	str[l1 + l2] = '\0';
 	if (s1)
 		free(s1);
-//	if (s2)
-//		free(s2);
 	return (str);
 }
 
@@ -94,7 +79,7 @@ char	*ft_strdup(char *s)
 
 char	*ft_substr(char *s, int start, int len)
 {
-	int	i;
+	int		i;
 	char	*str;
 
 	if (!s)

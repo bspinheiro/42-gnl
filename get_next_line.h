@@ -6,7 +6,7 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 11:38:17 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/19 18:30:56 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/21 04:40:45 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,10 +25,9 @@
 # include <stdio.h> /* open() TODO:  REMOVER ANTES DE ENVIAR */
 
 char	*get_next_line(int fd);
-char	*ft_strchr(const char *s, int c);
+int		ft_strlen(char *s);
 char	*ft_strjoin(char *s1, char *s2);
 char	*ft_strdup(char *s);
-int		ft_strlen(char *s);
 void	*ft_memcpy(void *dst, const void *src, size_t n);
 char	*ft_substr(char *s, int start, int len);
 
