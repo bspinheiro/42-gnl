@@ -6,7 +6,7 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 13:18:34 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/21 04:42:40 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/21 08:35:37 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,10 @@ char	*ft_strjoin(char *s1, char *s2)
 	ft_memcpy(str + l1, s2, l2);
 	str[l1 + l2] = '\0';
 	if (s1)
+	{
 		free(s1);
+		s1 = NULL;
+	}
 	return (str);
 }
 

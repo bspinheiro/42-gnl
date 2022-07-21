@@ -6,7 +6,7 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/14 13:47:50 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/21 04:50:54 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/21 10:07:26 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,10 @@ char	*read_buffer(int fd, char *buffer, ssize_t *flag)
 {
 	*flag = read(fd, buffer, BUFFER_SIZE);
 	if (*flag < 0)
+	{
+		free(buffer);
 		return (NULL);
+	}
 	buffer[*flag] = 0;
 	return (buffer);
 }
@@ -52,9 +55,11 @@ char	*build_line(int fd, ssize_t *flag)
 		line = ft_strjoin(line, buffer);
 	}
 	free(buffer);
-	if (!*line)
+	buffer = NULL;
+	if (ft_strlen(line) == 0)
 	{
 		free(line);
+		line = NULL;
 		return (NULL);
 	}
 	return (line);
@@ -72,13 +77,20 @@ char	*cut_n_save(char *temp, char **cache)
 	if (ft_strlen(*cache) != 0)
 		tmp = ft_strjoin(*cache, temp);
 	else
+	{
 		tmp = ft_strdup(temp);
+		free(*cache);
+	}
 	n = (ft_strchr(tmp, '\n') - tmp) + 1;
 	line = ft_substr(tmp, 0, n);
 	*cache = ft_substr(tmp, n, ft_strlen(tmp) + 1);
 	if (*temp)
+	{
 		free(temp);
-	free(tmp);
+		temp = NULL;
+	}
+	if (*tmp)
+		free(tmp);
 	return (line);
 }
 
@@ -94,7 +106,7 @@ char	*get_next_line(int fd)
 	if (BUFFER_SIZE < 1 || fd < 0 || fd > MAX_FD)
 		return (NULL);
 	if (!cache)
-		cache = ft_strdup("\0");
+		cache = ft_strdup("");
 	if (!ft_strchr(cache, '\n'))
 	{
 		temp = build_line(fd, &flag);
@@ -102,16 +114,23 @@ char	*get_next_line(int fd)
 	}
 	else
 		line = cut_n_save("", &cache);
+	if (flag <= 0)
+	{
+		if (*cache)
+			free(cache);
+		if (*temp)
+			free(temp);
+	}
 	return (line);
 }
-
+/*
 int	main(void)//TODO: Implement argc, argv
 {
 	int		fd;
 	char	*str;
 
 	str = NULL;
-	fd = open("t4.txt", O_RDONLY);
+	fd = open("gnlTester/files/41_with_nl", O_RDONLY);
 	do
 	{
 		str = get_next_line(fd);
@@ -119,4 +138,4 @@ int	main(void)//TODO: Implement argc, argv
 		free(str);
 	} while(str != NULL);
 	return (0);
-}
+}*/
