@@ -6,7 +6,7 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/14 13:47:50 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/21 10:07:26 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/21 16:17:07 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ char	*read_buffer(int fd, char *buffer, ssize_t *flag)
 		free(buffer);
 		return (NULL);
 	}
-	buffer[*flag] = 0;
+	buffer[*flag] = '\0';
 	return (buffer);
 }
 
@@ -42,7 +42,7 @@ char	*build_line(int fd, ssize_t *flag)
 	char	*buffer;
 	char	*line;
 
-	line = ft_strdup("\0");
+	line = ft_strdup("");
 	buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buffer)
 	{
@@ -72,6 +72,7 @@ char	*cut_n_save(char *temp, char **cache)
 	char	*tmp;
 
 	n = 0;
+	line = NULL;
 	if (!temp)
 		return (NULL);
 	if (ft_strlen(*cache) != 0)
@@ -82,8 +83,13 @@ char	*cut_n_save(char *temp, char **cache)
 		free(*cache);
 	}
 	n = (ft_strchr(tmp, '\n') - tmp) + 1;
-	line = ft_substr(tmp, 0, n);
-	*cache = ft_substr(tmp, n, ft_strlen(tmp) + 1);
+	if (n > 0)
+	{
+		line = ft_substr(tmp, 0, n);
+		*cache = ft_substr(tmp, n, ft_strlen(tmp));
+	}
+	else
+		line = ft_strdup(tmp);
 	if (*temp)
 	{
 		free(temp);
@@ -102,6 +108,7 @@ char	*get_next_line(int fd)
 	ssize_t		flag;
 
 	temp = NULL;
+	line = NULL;
 	flag = 1;
 	if (BUFFER_SIZE < 1 || fd < 0 || fd > MAX_FD)
 		return (NULL);
@@ -114,23 +121,30 @@ char	*get_next_line(int fd)
 	}
 	else
 		line = cut_n_save("", &cache);
-	if (flag <= 0)
+	if (flag < 0)
 	{
 		if (*cache)
 			free(cache);
-		if (*temp)
-			free(temp);
+		if (line)
+			free(line);
+		return (NULL);
 	}
 	return (line);
 }
-/*
-int	main(void)//TODO: Implement argc, argv
+
+/*int	main(void)//TODO: Implement argc, argv
 {
 	int		fd;
 	char	*str;
 
 	str = NULL;
 	fd = open("gnlTester/files/41_with_nl", O_RDONLY);
+//	str = get_next_line(fd);
+//	printf("%s", str);
+//	close(fd);
+//	str = get_next_line(fd);
+//	printf("%s", str);
+//	return (0);
 	do
 	{
 		str = get_next_line(fd);
