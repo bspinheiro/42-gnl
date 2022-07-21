@@ -4,7 +4,7 @@
 # include <stdio.h> /* open() TODO:  REMOVER ANTES DE ENVIAR */
 
 # ifndef BUFFER_SIZE
-#  define BUFFER_SIZE (1) /* TODO: set 1 for evaluation*/
+#  define BUFFER_SIZE (100) /* TODO: set 1 for evaluation*/
 # endif
 
 # ifndef MAX_FD
@@ -36,7 +36,12 @@ char	*ft_strjoin(char *s1, char *s2)
 	size_t	l2;
 	char	*str;
 
-	if (!s1 && !s2)
+	if (!s1)
+	{
+		s1 = malloc (sizeof(char) * 1);
+		s1[0] = '\0';
+	}
+	if (!s1 || !s2)
 		return (NULL);
 	l1 = ft_strlen(s1);
 	l2 = ft_strlen(s2);
@@ -112,6 +117,8 @@ char	*ft_substr(char *s, int start, int len)
 
 char	*ft_strchr(const char *s, int c)
 {
+	if(!s)
+		return (0);
 	while (*s != '\0')
 	{
 		if (*s == (unsigned char)c)
@@ -123,105 +130,82 @@ char	*ft_strchr(const char *s, int c)
 	return (0);
 }
 
-char	*read_buffer(int fd, char *buffer, ssize_t *flag)
+char	*first_part_of(char *cache)
 {
-	*flag = read(fd, buffer, BUFFER_SIZE);
-	if (*flag < 0)
-	{
-		free(buffer);
+	int		i;
+	char	*line;
+		
+	i = 0;
+	if (cache[i] == 0)
 		return (NULL);
+	while (cache[i] != '\0' && cache[i] != '\n')
+		i++;
+	line = malloc(sizeof(char) * (i + 2));
+	if (!line)
+		return (NULL);
+	i = 0;
+	while (cache[i] != '\0' && cache[i] != '\n')
+	{
+		line[i] = cache[i];
+		i++;
 	}
-	buffer[*flag] = '\0';
-	return (buffer);
+	if (cache[i] == '\n')
+		line[i] = '\n';
+	return(line);
 }
 
-char	*build_line(int fd, ssize_t *flag)
+char	*second_part_of(char *cache)
 {
-	char	*buffer;
-	char	*line;
+	int		n;
+	char	*temp;
 
-	line = ft_strdup("\0");
-	buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1));
-	if (!buffer)
-	{
-		*flag = -2;
+	n = 0;
+	n = (ft_strchr(cache, '\n') - cache) + 1;
+	if (n < 0)
+		free(cache);
 		return (NULL);
-	}
-	while (*flag > 0 && !ft_strchr(line, '\n'))
+	temp = ft_substr(cache, n, ft_strlen(cache) + 1);
+	return (temp);
+}
+
+char	*build_line(int fd, char *cache)
+{
+	ssize_t flag;
+	char	*buffer;
+
+	cache = ft_strdup("");
+	buffer = malloc(sizeof(char) * (BUFFER_SIZE + 1));
+	if (!buffer) 
+		return (NULL);
+	flag = 1;
+	while (flag > 0 && !ft_strchr(cache, '\n'))
 	{
-		buffer = read_buffer(fd, buffer, flag);
-		line = ft_strjoin(line, buffer);
+		flag = read(fd, buffer, BUFFER_SIZE);
+		if (flag < 0)
+		{
+			free(buffer);
+			return (NULL);
+		}
+		buffer[flag] = '\0';
+		cache = ft_strjoin(cache, buffer);
 	}
 	free(buffer);
 	buffer = NULL;
-	if (ft_strlen(line) == 0)
-	{
-		free(line);
-		line = NULL;
-		return (NULL);
-	}
-	return (line);
+	return (cache);
 }
-
-char	*cut_n_save(char *temp, char **cache)
-{
-	int		n;
-	char	*line;
-	char	*tmp;
-	//char	*swap;
-
-	n = 0;
-	if (!temp)
-		return (NULL);
-	if (ft_strlen(*cache) != 0)
-		tmp = ft_strjoin(*cache, temp);
-	else
-	{
-		tmp = ft_strdup(temp);
-		free(*cache);
-	}
-	n = (ft_strchr(tmp, '\n') - tmp) + 1;
-	line = ft_substr(tmp, 0, n);
-	//swap = *cache;
-	*cache = ft_substr(tmp, n, ft_strlen(tmp) + 1);
-	//free(swap);
-	if (*temp)
-	{
-		free(temp);
-		temp = NULL;
-	}
-	if (*tmp)
-		free(tmp);
-	return (line);
-}
-
+	
 char	*get_next_line(int fd)
 {
 	static char	*cache;
-	char		*temp;
 	char		*line;
-	ssize_t		flag;
 
-	temp = NULL;
-	flag = 1;
 	if (BUFFER_SIZE < 1 || fd < 0 || fd > MAX_FD)
 		return (NULL);
+	cache = build_line(fd, cache);
 	if (!cache)
-		cache = ft_strdup("");
-	if (!ft_strchr(cache, '\n'))
-	{
-		temp = build_line(fd, &flag);
-		line = cut_n_save(temp, &cache);
-	}
-	else
-		line = cut_n_save("", &cache);
-	if (flag < 0)
-	{
-		if (*cache)
-			free(cache);
-		if (*temp)
-			free(temp);
-	}
+		return (NULL);	
+	line = first_part_of(cache);
+	cache = second_part_of(cache);
 	return (line);
 }
 
@@ -243,7 +227,17 @@ int	main(void)//TODO: Implement argc, argv
     printf("%s", str);
     free(str);
 
-    /*
+	str = get_next_line(fd);
+    printf("%s", str);
+    free(str);
+
+    str = get_next_line(fd);
+    printf("%s", str);
+    free(str);
+
+    str = get_next_line(fd);
+    printf("%s", str);
+    free(str);/*
 	do
 	{
 		str = get_next_line(fd);

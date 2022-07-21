@@ -6,7 +6,7 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/06 13:18:34 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/21 16:03:02 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/21 17:05:06 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,6 @@ char	*ft_strjoin(char *s1, char *s2)
 
 	if (!s1 && !s2)
 		return (NULL);
-	if (!s1)
-		return (ft_strdup(""));
 	l1 = ft_strlen(s1);
 	l2 = ft_strlen(s2);
 	str = malloc(sizeof(char) * (l1 + l2 + 1));
