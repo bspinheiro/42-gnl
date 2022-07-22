@@ -6,7 +6,7 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 09:55:46 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/22 10:13:48 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/22 10:17:43 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 # endif
 
 # ifndef FD_SIZE
-#  define FD_SIZE (4096)
+#  define FD_SIZE (256)
 # endif
 
 # include <unistd.h>
