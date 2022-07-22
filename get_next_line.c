@@ -6,7 +6,7 @@
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 08:16:53 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/22 09:24:15 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/22 11:45:10 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,21 +101,3 @@ char	*get_next_line(int fd)
 	cache = second_part_of(cache);
 	return (line);
 }
-/*
-int	main(void)//TODO: Implement argc, argv
-{
-	int		fd;
-	char	*str;
-
-	str = NULL;
-	//fd = open("gnlTester/files/41_with_nl", O_RDONLY);
-	fd = open("arquivo.txt", O_RDONLY);
-	do
-	{
-		str = get_next_line(fd);
-		printf("%s", str);
-		free(str);
-	} while(str != NULL);
-	return (0);
-}
-*/
