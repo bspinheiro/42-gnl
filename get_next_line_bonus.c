@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line_bonus.c                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bda-silv <bda-silv@student.42.rio>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/22 08:16:53 by bda-silv          #+#    #+#             */
-/*   Updated: 2022/07/22 09:24:15 by bda-silv         ###   ########.fr       */
+/*   Updated: 2022/07/22 10:10:26 by bda-silv         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 char	*first_part_of(char *s)
 {
@@ -89,33 +89,15 @@ char	*build_line(int fd, char *cache)
 
 char	*get_next_line(int fd)
 {
-	static char	*cache;
+	static char	*cache[FD_SIZE];
 	char		*line;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
+	if (fd < 0 || BUFFER_SIZE <= 0 || fd > FD_SIZE)
 		return (NULL);
-	cache = build_line(fd, cache);
-	if (!cache)
+	cache[fd] = build_line(fd, cache[fd]);
+	if (!cache[fd])
 		return (NULL);
-	line = first_part_of(cache);
-	cache = second_part_of(cache);
+	line = first_part_of(cache[fd]);
+	cache[fd] = second_part_of(cache[fd]);
 	return (line);
 }
-/*
-int	main(void)//TODO: Implement argc, argv
-{
-	int		fd;
-	char	*str;
-
-	str = NULL;
-	//fd = open("gnlTester/files/41_with_nl", O_RDONLY);
-	fd = open("arquivo.txt", O_RDONLY);
-	do
-	{
-		str = get_next_line(fd);
-		printf("%s", str);
-		free(str);
-	} while(str != NULL);
-	return (0);
-}
-*/
